@@ -1,10 +1,9 @@
 {
-  "name": "mhws-and-the-Indonesian-Seas",
+  "name": "mhws-website",
   "entry": "./src/index.js",
-  "installCommand": "pnpm install",
+  "installCommand": "pnpm install --no-ignore-scripts",
   "buildCommand": "pnpm run build",
   "assets": {
-    "directory": "./dist",
-    "notFoundStrategy": "singlePageApplication"
+    "directory": "./dist"
   }
 }

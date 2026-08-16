@@ -27,10 +27,7 @@
     "yaml": "^2.9.0"
 
   
-  },
-  "pnpm": {
-  "onlyBuiltDependencies": ["esbuild", "sharp"]
-}
+  }
   
 }
 
