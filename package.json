@@ -25,9 +25,8 @@
   "devDependencies": {
     "decap-server": "^3.10.0",
     "yaml": "^2.9.0"
-
-  
+  },
+  "overrides": {
+    "rollup": "3.29.4"
   }
-  
 }
-

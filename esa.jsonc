@@ -1,7 +1,7 @@
 {
   "name": "mhws-website",
   "entry": "./src/index.js",
-  "installCommand": "npm install && node scripts/patch-rollup.mjs",
+  "installCommand": "npm install",
   "buildCommand": "npm run build",
   "assets": {
     "directory": "./dist"
