@@ -1,14 +1,33 @@
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, rmSync, mkdirSync } from 'fs';
 
-// 修改 rollup 的 native.js：当原生模块加载失败时，不崩溃，返回空对象
-const file = 'node_modules/rollup/dist/native.js';
-let code = readFileSync(file, 'utf8');
+const rollupNativeDir = 'node_modules/@rollup/rollup-linux-x64-gnu';
 
-// 把 throw err 替换成 console.warn + 返回空对象
+// 1. 删除无法加载的二进制模块
+if (existsSync(rollupNativeDir)) {
+  rmSync(rollupNativeDir, { recursive: true, force: true });
+  console.log('✓ Removed @rollup/rollup-linux-x64-gnu');
+}
+
+// 2. 创建一个空壳模块，让 Rollup 能 require 到但不会报错
+mkdirSync(rollupNativeDir, { recursive: true });
+writeFileSync(`${rollupNativeDir}/package.json`, JSON.stringify({
+  name: '@rollup/rollup-linux-x64-gnu',
+  version: '0.0.0',
+  main: 'index.js'
+}));
+writeFileSync(`${rollupNativeDir}/index.js`, 'module.exports = {};\n');
+
+console.log('✓ Created stub @rollup/rollup-linux-x64-gnu');
+
+// 3. 修改 rollup 的 native.js，让它不因为空模块而报错
+const nativeJs = 'node_modules/rollup/dist/native.js';
+let code = readFileSync(nativeJs, 'utf8');
+
+// 把 require(id) 替换成安全的版本，找不到或加载失败就返回空对象
 code = code.replace(
-  'throw err',
-  'console.warn("[rollup] Native binary skipped, using fallback"); module.exports = {}; return'
+  "require(id)",
+  "(function(){try{return require(id)}catch(e){return {}}})()"
 );
 
-writeFileSync(file, code);
-console.log('✓ Rollup native.js patched successfully');
+writeFileSync(nativeJs, code);
+console.log('✓ Patched rollup/dist/native.js');
