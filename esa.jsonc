@@ -1,7 +1,7 @@
 {
   "name": "mhws-website",
   "entry": "./src/index.js",
-  "installCommand": "ROLLUP_SKIP_NATIVE_NODE_MODULES=true npm install",
+  "installCommand": "npm install --no-optional",
   "buildCommand": "npm run build",
   "assets": {
     "directory": "./dist"
