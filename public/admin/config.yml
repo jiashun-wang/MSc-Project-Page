@@ -1,0 +1,408 @@
+# Admin configuration for the SAN Lab site.
+#
+# Every field below maps to a real file in /content/. Saving in the admin UI
+# writes a git commit, so nothing is ever lost and any change can be undone.
+#
+# Labels and hints are written for Dr. Eisenberger, not for a developer.
+
+backend:
+  name: github
+  repo: marine-heatwaves/mhws-and-the-Indonesian-Seas
+  branch: main
+  # Where the GitHub sign-in handshake happens.
+  #
+  # Without this line Sveltia defaults to api.netlify.com, which only works for
+  # sites hosted on Netlify. This one isn't, so Netlify answers "Not Found" and
+  # the admin reports "Authentication aborted."
+  #
+  # This is the address of the small official auth worker
+  # (github.com/sveltia/sveltia-cms-auth), deployed separately. Step 4 of
+  # DOCS/DEPLOYMENT.md walks through it.
+  #
+  # NOTE: this assumes the worker keeps its default name on the same Cloudflare
+  # subdomain as the site. If Cloudflare named it something else, correct this
+  # one line — it is the only place the address appears.
+  base_url: https://sveltia-cms-auth.1043210554.workers.dev
+
+# NOTE: `local_backend` (and the `npm run admin` / decap-server workflow that
+# goes with it) is a Decap CMS feature. This admin is Sveltia CMS, which ignores
+# the option and says so in the browser console. It has been removed rather than
+# left in to look reassuring.
+#
+# To edit locally, run `npm run dev` and open http://localhost:4321/admin —
+# Sveltia detects localhost and offers to open the repository folder directly.
+
+# Save publishes. No draft/review workflow to learn.
+publish_mode: simple
+
+# Fallback location for any image that isn't attached to a specific collection.
+media_folder: public/uploads
+public_folder: /uploads
+
+collections:
+  # ─────────────────────────────────────────────────────────────
+  # Current members. Filtered to status=current, so this list shows exactly
+  # what the People page shows.
+  - name: people
+    label: Project Members
+    label_singular: Project member
+    description: >-
+      Everyone currently in the project. Adding a person here puts them on the People
+      page. To move someone out of the project, change "Currently in the project?" to No
+      and they move to Project Alumni.
+    folder: content/people
+    filter: { field: status, value: current }
+    create: true
+    delete: true
+    slug: '{{slug}}'
+    media_folder: images
+    public_folder: ./images
+    summary: '{{name}} — {{role}}'
+    sortable_fields: [order, name]
+    fields:
+      - { name: name, label: Full name, widget: string }
+      - {
+          name: role,
+          label: Title,
+          widget: string,
+          default: Lab Member,
+          hint: 'For example: Director, Graduate Student, Postdoctoral Fellow.',
+        }
+      - name: status
+        label: Currently in the project?
+        widget: select
+        default: current
+        options:
+          - { label: 'Yes — show on the People page', value: current }
+          - { label: 'No — move to Project Alumni', value: alumni }
+      - {
+          name: order,
+          label: Position in the list,
+          widget: number,
+          default: 10,
+          value_type: int,
+          hint: Lower numbers appear first. The Director is 1.,
+        }
+      - {
+          name: headshot,
+          label: Photograph,
+          widget: image,
+          required: false,
+          hint: "Optional. Without one, the card shows the person's initials.",
+        }
+      - {
+          name: headshotAlt,
+          label: Photo description,
+          widget: string,
+          required: false,
+          hint: 'A short description for screen readers, e.g. "Portrait of Jane Doe."',
+        }
+      - {
+          name: needsReview,
+          label: Mark as incomplete,
+          widget: boolean,
+          default: false,
+          hint: Tick this if the bio still needs writing. It shows a notice on the site.,
+        }
+      - {
+          name: body,
+          label: Biography,
+          widget: markdown,
+          required: false,
+          hint: Use the italic button for emphasis. Leave a blank line between paragraphs.,
+        }
+
+  # ─────────────────────────────────────────────────────────────
+  # Same folder, filtered the other way. Kept as its own list because scrolling
+  # past 26 alumni to find a current member would be miserable.
+  - name: alumni
+    label: Project Alumni
+    label_singular: Alumnus
+    description: Former project members. Adding someone here puts them on the Alumni page.
+    folder: content/people
+    filter: { field: status, value: alumni }
+    create: true
+    delete: true
+    slug: 'alumni-{{slug}}'
+    media_folder: images
+    public_folder: ./images
+    summary: '{{name}}'
+    sortable_fields: [order, name]
+    fields:
+      - { name: name, label: Full name, widget: string }
+      - {
+          name: credential,
+          label: Letters after their name,
+          widget: string,
+          required: false,
+          default: 'Ph.D.',
+          hint: 'Shown after the name — for example Ph.D. Leave empty for none.',
+        }
+      - {
+          name: role,
+          label: Where they are now,
+          widget: string,
+          default: Former lab member,
+          hint: 'Their current institution or employer, e.g. Carnegie Mellon University.',
+        }
+      - {
+          name: listed,
+          label: 'Show on the Alumni page?',
+          widget: boolean,
+          default: true,
+          hint: 'Turn this off to hide someone without deleting them. You can turn it back on at any time.',
+        }
+      - name: status
+        label: Currently in the lab?
+        widget: select
+        default: alumni
+        options:
+          - { label: 'Yes — move back to Lab Members', value: current }
+          - { label: 'No — stays on Lab Alumni', value: alumni }
+      - { name: order, label: Position in the list, widget: number, default: 100, value_type: int }
+      - { name: headshot, label: Photograph, widget: image, required: false }
+      - { name: headshotAlt, label: Photo description, widget: string, required: false }
+      - { name: needsReview, label: Mark as incomplete, widget: boolean, default: false }
+      - { name: body, label: Note, widget: markdown, required: false }
+
+  # ─────────────────────────────────────────────────────────────
+  - name: research
+    label: Research Topics
+    label_singular: Research topic
+    description: >-
+      The four research pages. Adding one here creates a new page and adds it to
+      the Research index and the home page automatically.
+    folder: content/research
+    create: true
+    delete: true
+    slug: '{{slug}}'
+    media_folder: images
+    public_folder: ./images
+    summary: '{{title}}'
+    sortable_fields: [order, title]
+    fields:
+      - { name: title, label: Topic title, widget: string }
+      - { name: order, label: Position in the list, widget: number, default: 10, value_type: int }
+      - {
+          name: summary,
+          label: Short summary,
+          widget: text,
+          hint: 'One or two sentences, shown on the Research index card.',
+        }
+      - {
+          name: hero,
+          label: Header image,
+          widget: image,
+          required: false,
+          hint: The large image at the top of the topic page.,
+        }
+      - { name: heroAlt, label: Image description, widget: string, required: false }
+      - { name: needsReview, label: Mark as incomplete, widget: boolean, default: false }
+      - {
+          name: body,
+          label: Full text,
+          widget: markdown,
+          hint: Use the italic button for emphasis — it is preserved on the site.,
+        }
+
+  # ─────────────────────────────────────────────────────────────
+  - name: pages
+    label: Pages
+    label_singular: Page
+    description: >-
+      Add a new page to the site, or edit one you have already made. A new page
+      gets its own web address and is added to the menu, and it is laid out in
+      the same style as the rest of the site automatically.
+
+
+      "Lab Overview" is the one exception in this list: it is printed at the top
+      of the Research page rather than having a page of its own, so its address
+      and menu settings are ignored.
+    folder: content/pages
+    create: true
+    delete: true
+    slug: '{{slug}}'
+    media_folder: images
+    public_folder: ./images
+    summary: '{{title}}'
+    sortable_fields: [navOrder, title]
+    fields:
+      - {
+          name: title,
+          label: Page title,
+          widget: string,
+          hint: The large heading at the top of the page.,
+        }
+      - {
+          name: eyebrow,
+          label: Small label above the title,
+          widget: string,
+          default: SAN Lab,
+          required: false,
+          hint: 'A short word or two, e.g. "Join the lab" or "News".',
+        }
+      - {
+          name: lede,
+          label: Opening line,
+          widget: text,
+          required: false,
+          hint: One sentence under the title. Leave blank if you do not want one.,
+        }
+      - {
+          name: hero,
+          label: Header image,
+          widget: image,
+          required: false,
+          hint: Optional. Without one the page opens on the dark background.,
+        }
+      - {
+          name: heroAlt,
+          label: Header image description,
+          widget: string,
+          required: false,
+          hint: A short description of the image for screen readers.,
+        }
+      - {
+          name: showInNav,
+          label: 'Show in the menu?',
+          widget: boolean,
+          default: true,
+          hint: Turn this off for a page you want to link to yourself rather than list in the menu.,
+        }
+      - {
+          name: navLabel,
+          label: Shorter name for the menu,
+          widget: string,
+          required: false,
+          hint: Optional. Use this when the page title is too long to sit in the menu.,
+        }
+      - {
+          name: navOrder,
+          label: Position in the menu,
+          widget: number,
+          default: 50,
+          value_type: int,
+          hint: 'Lower numbers come first. The fixed sections are Home 10, Research 20, Papers 30, People 40 — leave this at 50 to appear after them.',
+        }
+      - {
+          name: draft,
+          label: Draft,
+          widget: boolean,
+          default: false,
+          hint: Tick this while you are still writing. The page stays off the website until you untick it.,
+        }
+      - {
+          name: needsReview,
+          label: Mark as incomplete,
+          widget: boolean,
+          default: false,
+        }
+      - {
+          name: body,
+          label: Text,
+          widget: markdown,
+          required: false,
+          hint: Use the italic button for emphasis. Leave a blank line between paragraphs.,
+        }
+
+  # ─────────────────────────────────────────────────────────────
+  - name: publications
+    label: Papers
+    files:
+      - name: papers
+        label: Publication list
+        file: content/papers.json
+        description: Every publication on the Papers page.
+        fields:
+          - name: papers
+            label: Publications
+            label_singular: Publication
+            widget: list
+            summary: '{{fields.year}} — {{fields.title}}'
+            fields:
+              - {
+                  name: id,
+                  label: Number,
+                  widget: number,
+                  value_type: int,
+                  hint: Just an internal number. Use one higher than the current highest.,
+                }
+              - { name: title, label: Title, widget: string }
+              - {
+                  name: authors,
+                  label: Authors,
+                  widget: string,
+                  hint: 'As they appear in print, e.g. Smith, J., & Eisenberger, N.I.',
+                }
+              - {
+                  name: journal,
+                  label: Journal and pages,
+                  widget: string,
+                  required: false,
+                  hint: 'e.g. Emotion, 26(1), 14-24',
+                }
+              - {
+                  name: year,
+                  label: Year,
+                  widget: number,
+                  value_type: int,
+                  default: 2026,
+                  hint: Use 9999 for papers that are in press so they sort to the top.,
+                }
+              - { name: inPress, label: In press, widget: boolean, default: false }
+              - {
+                  name: traineeFirstAuthor,
+                  label: First author is a trainee,
+                  widget: boolean,
+                  default: false,
+                }
+              - {
+                  name: doi,
+                  label: DOI link,
+                  widget: string,
+                  required: false,
+                  hint: Paste the full https:// link. Leave blank if there isn't one.,
+                }
+              - {
+                  name: pdf,
+                  label: PDF link,
+                  widget: string,
+                  required: false,
+                  hint: Leave blank if no PDF is available.,
+                }
+              - {
+                  name: citation,
+                  label: Full citation text,
+                  widget: text,
+                  hint: The complete reference as it should read.,
+                }
+
+  # ─────────────────────────────────────────────────────────────
+  - name: settings
+    label: Site Details
+    files:
+      - name: site
+        label: Lab name and contact details
+        file: content/site.json
+        description: Appears in the footer and on the Overview page.
+        fields:
+          - { name: labName, label: Full lab name, widget: string }
+          - { name: labNameShort, label: Short name, widget: string }
+          - { name: director, label: Director, widget: string }
+          - { name: institution, label: Institution, widget: string }
+          - { name: department, label: Department, widget: string }
+          - { name: tagline, label: Tagline, widget: string, required: false }
+          - name: contact
+            label: Contact details
+            widget: object
+            fields:
+              - { name: building, label: Building, widget: string }
+              - {
+                  name: addressLines,
+                  label: Mailing address,
+                  widget: list,
+                  field: { name: line, label: Line, widget: string },
+                }
+              - { name: mailCode, label: Mail code, widget: string }
+              - { name: email, label: Email, widget: string }
+              - { name: phone, label: Phone, widget: string }

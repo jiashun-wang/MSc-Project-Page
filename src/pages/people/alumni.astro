@@ -1,0 +1,102 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import headerImage from '../../assets/gallery/20260816-102523-262.webp';
+
+// The roster and its order are the client's, supplied directly. `listed: false`
+// holds back the people she did not include — their entries stay in the repo so
+// that adding one back is a checkbox rather than a re-transcription.
+const alumni = (await getCollection('people'))
+  // `!== false` rather than a truthiness test: this page is a list of real
+  // people, so the only safe way for the flag to fail is open. An entry that
+  // somehow reaches here without it — a hand-edited file, a stale content
+  // cache — shows up, instead of the whole roster silently emptying.
+  .filter((p) => p.data.status === 'alumni' && p.data.listed !== false)
+  .sort((a, b) => a.data.order - b.data.order);
+
+const initials = (name: string) =>
+  name
+    .split(' ')
+    .filter(Boolean)
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join('');
+---
+
+<Base
+  title="Project Alumni"
+  description="Former members of the Social and Affective Neuroscience Laboratory at UCLA."
+>
+  <PageHeader
+    image={headerImage}
+    imageAlt="A dark cave mouth opening onto a lit tree and a pale green sea beyond."
+    eyebrow="People"
+    title="project alumni"
+  />
+
+  <section class="mx-auto max-w-[110rem] px-(--spacing-gutter) pb-(--spacing-section)">
+    {/* A roster, not a gallery. The portraits on the live site are about 110
+        pixels wide — that is the original upload, not a thumbnail — so they are
+        set at 4.5rem here. Enlarged to the size of the cards on the People page
+        they would be a wall of blur; at this size they are sharp, and the page
+        reads as a tidy directory, which is what an alumni list wants to be
+        anyway. */}
+    <ul class="grid gap-x-12 gap-y-10 sm:grid-cols-2 xl:grid-cols-3">
+      {
+        alumni.map((person, i) => (
+          <li class="reveal flex gap-5" data-reveal-delay={(i % 3) * 70}>
+            {/* `self-start` matters: the row is a flex container, so without it
+                the portrait stretches to the height of the text beside it and
+                the 4:5 aspect never applies. */}
+            <div
+              class="aspect-[4/5] w-[4.5rem] shrink-0 self-start overflow-hidden bg-ground-raised"
+            >
+              {person.data.headshot ? (
+                <Image
+                  src={person.data.headshot}
+                  alt={person.data.headshotAlt || `Portrait of ${person.data.name}.`}
+                  widths={[144]}
+                  sizes="4.5rem"
+                  loading={i < 6 ? 'eager' : 'lazy'}
+                  class="h-full w-full object-cover"
+                />
+              ) : (
+                <div
+                  class="flex h-full w-full items-center justify-center bg-gradient-to-br from-ground-raised to-ground"
+                  role="img"
+                  aria-label={`No photograph available for ${person.data.name}.`}
+                >
+                  <span class="font-display text-[1.1rem] text-bone/25">
+                    {initials(person.data.name)}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div class="min-w-0 pt-0.5">
+              {/* The post-nominal is set apart from the name rather than run
+                  into it: every one of them is a Ph.D., so at full weight the
+                  suffix would repeat down the column and compete with the
+                  names it is meant to qualify. */}
+              {/* Name and post-nominal are butted together on one line on
+                  purpose: a line break between them is a whitespace text node,
+                  which renders as "Razia Sahi , Ph.D." */}
+              <h2 class="font-display text-[1.15rem] leading-snug text-bone">
+                {person.data.name}{person.data.credential && <span class="text-bone-muted">, {person.data.credential}</span>}
+              </h2>
+              <p class="mt-1.5 text-[0.92rem] leading-relaxed text-bone-muted">
+                {person.data.role}
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="mt-20">
+      <a href="/people" class="link-rule text-[1.05rem]">← Current project members</a>
+    </p>
+  </section>
+</Base>

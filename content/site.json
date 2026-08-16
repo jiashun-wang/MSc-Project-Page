@@ -1,0 +1,19 @@
+{
+  "labName": "Marine Heatwave & the Indonesian Seas",
+  "labNameShort": "MHWs Group",
+  "director": "Xunwei Nie, Ph.D. & Shujiang Li, Ph.D.",
+  "institution": "Ministry of Natural Resources, China",
+  "department": "First Institute of Oceanography",
+  "tagline": "How the Marine Heatwaves affect the Indonesian Seas",
+  "contact": {
+    "_comment": "",
+    "building": "6 Xianxialing Road, Laoshan District",
+    "addressLines": [
+      "First Institute of Oceanography, Ministry of Natural Resources", 
+      "6 Xianxialing Road, Laoshan District", 
+      "Qingdao 266061, China"
+    ],
+    "mailCode": "266061",
+    "email": "wjs@hrbeu.edu.cn"
+  }
+}

@@ -1,0 +1,71 @@
+---
+import { site } from '../config';
+import { getNavItems } from '../utils/pages';
+const { contact } = site;
+const year = new Date().getFullYear();
+
+// Same list the header shows, so the footer can never fall out of step with it.
+const nav = await getNavItems();
+---
+
+<footer class="border-t border-bone/10 bg-ground-veil">
+  <div
+    class="mx-auto grid max-w-[110rem] gap-14 px-(--spacing-gutter) py-20 md:grid-cols-[1.4fr_1fr_1fr] md:py-24"
+  >
+    <div>
+      <h2 class="font-display text-title text-bone">
+        {site.labName}
+      </h2>
+      <p class="mt-4 max-w-sm text-[0.95rem] leading-relaxed text-bone-muted">
+        Directed by {site.director} · {site.department}, {site.institution}
+      </p>
+    </div>
+
+    <div>
+      <h3 class="text-eyebrow font-medium uppercase text-clay-light">Contact</h3>
+      <address class="mt-5 space-y-1 text-[0.95rem] not-italic leading-relaxed text-bone-dim">
+        {contact.addressLines.map((line) => <div>{line}</div>)}
+      </address>
+      <p class="mt-4 space-y-1 text-[0.95rem] text-bone-dim">
+        <span class="block">
+          Email: <a href={`mailto:${contact.email}`} class="transition-colors duration-400 hover:text-bone">{contact.email}</a>
+        </span>
+        <!-- <span class="block">
+          Phone: <a href={`tel:+1${contact.phone.replace(/\D/g, '')}`} class="transition-colors duration-400 hover:text-bone">{contact.phone}</a>
+        </span> -->
+      </p>
+    </div>
+
+    <div>
+      <h3 class="text-eyebrow font-medium uppercase text-clay-light">Explore</h3>
+      <ul class="mt-5 space-y-2.5">
+        {
+          nav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="text-[0.95rem] text-bone-dim transition-colors duration-400 hover:text-bone"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+
+  <div class="border-t border-bone/10">
+    <div
+      class="mx-auto flex max-w-[110rem] flex-col gap-3 px-(--spacing-gutter) py-7 text-[0.82rem] text-bone-muted sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p>© {year} Jiashun Wang. All rights reserved.</p>
+      <a
+        href="https://jia-shun.wang"
+        class="transition-colors duration-400 hover:text-ucla-gold"
+      >
+        Built by Jiashun Wang
+      </a>
+    </div>
+  </div>
+</footer>
