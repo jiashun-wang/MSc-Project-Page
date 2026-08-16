@@ -1,8 +1,8 @@
 {
   "name": "mhws-website",
   "entry": "./src/index.js",
-  "installCommand": "pnpm install --no-ignore-scripts",
-  "buildCommand": "pnpm run build",
+  "installCommand": "ROLLUP_SKIP_NATIVE_NODE_MODULES=true npm install",
+  "buildCommand": "npm run build",
   "assets": {
     "directory": "./dist"
   }
