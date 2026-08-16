@@ -27,6 +27,6 @@
     "yaml": "^2.9.0"
   },
   "overrides": {
-    "rollup": "4.21.4"
+    "rollup": "4.21.3"
   }
 }
