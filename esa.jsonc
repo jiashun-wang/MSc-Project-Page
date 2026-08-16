@@ -2,7 +2,7 @@
   "name": "mhws-website",
   "entry": "./src/index.js",
   "installCommand": "npm install",
-  "buildCommand": "npm run build",
+  "buildCommand": "echo '=== GLIBC VERSION CHECK ==='; ldd --version; getconf GNU_LIBC_VERSION; echo '=== NODE ==='; node -v; echo '=== BUILD ==='; npm run build",
   "assets": {
     "directory": "./dist"
   }
