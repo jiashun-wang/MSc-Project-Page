@@ -23,7 +23,7 @@ export default defineConfig({
   // site 覆盖两平台：GitHub Pages 传它的 domains，Cloudflare 传它自己的
   site: process.env.SITE_URL ?? 'https://eisenbergerlab.pages.dev',
   // base 用于子路径部署（GitHub Pages 项目站点 = /仓库名/；Cloudflare = /）
-  base: process.env.BASE_PATH ?? '/',
+  base: (process.env.BASE_PATH ?? '/').replace(/\/?$/, '/'),
   integrations: [
     sitemap({
       // The admin is noindex'd and disallowed in robots.txt, so listing it in
