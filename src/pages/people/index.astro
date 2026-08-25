@@ -25,6 +25,8 @@ const initials = (name: string) =>
     .map((p) => p[0])
     .slice(0, 2)
     .join('');
+
+const base = import.meta.env.BASE_URL;
 ---
 
 <Base
@@ -48,7 +50,7 @@ const initials = (name: string) =>
                 keyboard-focusable for free, and opens in a new tab on
                 cmd-click. JS upgrades it to an in-place modal. */}
             <a
-              href={`/people/${person.id}`}
+              href={`${base}people/${person.id}`}
               class="person-card group block text-left"
               data-person={person.id}
             >
@@ -117,7 +119,7 @@ const initials = (name: string) =>
     }
 
     <p class="mt-20">
-      <a href="/people/alumni" class="link-rule text-[1.05rem]">project alumni →</a>
+      <a href={`${base}people/alumni`} class="link-rule text-[1.05rem]">project alumni →</a>
     </p>
   </section>
 

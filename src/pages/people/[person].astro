@@ -25,6 +25,8 @@ const initials = name
   .map((p) => p[0])
   .slice(0, 2)
   .join('');
+
+const base = import.meta.env.BASE_URL;
 ---
 
 <Base title={name} description={`${name}, ${role} in the Social and Affective Neuroscience Laboratory at UCLA.`}>
@@ -63,7 +65,7 @@ const initials = name
         </div>
 
         <p class="mt-16 border-t border-bone/12 pt-8">
-          <a href="/people" class="link-rule text-[1.05rem]">← All lab members</a>
+          <a href={`${base}people`} class="link-rule text-[1.05rem]">← All lab members</a>
         </p>
       </div>
     </div>

@@ -29,6 +29,8 @@ export const getStaticPaths = (async () => {
 const { topic, index, siblings, prev, next } = Astro.props;
 const { Content } = await render(topic);
 const hero = topic.data.hero ?? fallbackHero;
+
+const base = import.meta.env.BASE_URL;
 ---
 
 <Base
@@ -89,7 +91,7 @@ const hero = topic.data.hero ?? fallbackHero;
                 return (
                   <li>
                     <a
-                      href={`/research/${s.id}`}
+                      href={`${base}research/${s.id}`}
                       aria-current={current ? 'page' : undefined}
                       class:list={[
                         'group flex gap-4 py-3.5 transition-colors duration-500',
@@ -121,7 +123,7 @@ const hero = topic.data.hero ?? fallbackHero;
           </ol>
 
           <p class="mt-10 border-t border-bone/12 pt-6">
-            <a href="/research" class="link-rule text-[0.95rem]">← Research overview</a>
+            <a href={`${base}research`} class="link-rule text-[0.95rem]">← Research overview</a>
           </p>
         </div>
       </aside>
@@ -133,7 +135,7 @@ const hero = topic.data.hero ?? fallbackHero;
     class="mx-auto grid max-w-[110rem] gap-px border-y border-bone/12 bg-bone/12 sm:grid-cols-2"
   >
     <a
-      href={`/research/${prev.id}`}
+      href={`${base}research/${prev.id}`}
       class="group bg-ground px-(--spacing-gutter) py-12 transition-colors duration-500 hover:bg-ground-raised"
     >
       <span class="text-eyebrow font-medium uppercase text-clay-light">← Previous</span>
@@ -146,7 +148,7 @@ const hero = topic.data.hero ?? fallbackHero;
       </span>
     </a>
     <a
-      href={`/research/${next.id}`}
+      href={`${base}research/${next.id}`}
       class="group bg-ground px-(--spacing-gutter) py-12 transition-colors duration-500 hover:bg-ground-raised sm:text-right"
     >
       <span class="text-eyebrow font-medium uppercase text-clay-light">Next →</span>

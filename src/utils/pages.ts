@@ -53,5 +53,22 @@ export async function getNavItems(): Promise<NavItem[]> {
 
   return [...nav, ...fromPages]
     .sort((a, b) => a.order - b.order)
-    .map(({ label, href }) => ({ label, href }));
+    .map(({ label, href }) => ({
+      label,
+      // Prefix every nav href with the deployment base (import.meta.env.BASE_URL),
+      // so links are correct on subpath hosts (GitHub Pages: /<repo>/) and at the
+      // root (Cloudflare: '/'). BASE_URL always ends in '/'.
+      href: withBase(href),
+    }));
+}
+
+/**
+ * Join a root-relative path (e.g. '/research' or '/') with the deployment base,
+ * so it works both under a subpath and at the site root. BASE_URL always
+ * ends with a slash ('/MSc-Project-Page/' or '/').
+ */
+function withBase(href: string): string {
+  const base = import.meta.env.BASE_URL;
+  if (href === '/') return base;
+  return `${base}${href.replace(/^\//, '')}`;
 }

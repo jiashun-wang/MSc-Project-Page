@@ -31,6 +31,10 @@ const isPreview = Astro.site?.hostname !== PRODUCTION_HOST;
 // Sitewide share image: the licensed cover photograph, cropped to the standard
 // 1200×630. Absolute URL — scrapers ignore relative og:image paths.
 const ogImage = new URL('/og.jpg', Astro.site);
+
+// Deployment base — '/MSc-Project-Page/' on GitHub Pages, '/' at the root
+// (Cloudflare). Used for the favicon and sitemap so they resolve under a subpath.
+const base = import.meta.env.BASE_URL;
 ---
 
 <!doctype html>
@@ -59,9 +63,9 @@ const ogImage = new URL('/og.jpg', Astro.site);
     <meta name="twitter:image" content={ogImage} />
 
     <!-- <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> -->
-    <link rel="icon" href="/icon.png" />
+    <link rel="icon" href={`${base}icon.png`} />
     <meta name="theme-color" content="#063d84" />
-    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="sitemap" href={`${base}sitemap-index.xml`} />
 
     {/* Cross-document navigation through the View Transition API: the old page
         is held on screen while the new one is fetched, so moving around the
